@@ -11,6 +11,13 @@
   <b>Intelligent projects · built to learn</b>
 </p>
 ---
+
+## 🚀 Overview
+
+ZombAI is a **next-gen Chrome Extension (Manifest V3)** with a futuristic **retro-terminal UI** that lets you explore GitHub profiles and repositories with speed, style, and intelligence.
+
+---
+---
 ```
 ███████╗ ██████╗ ███╗   ███╗██████╗       █████╗ ██╗
 ╚══███╔╝██╔═══██╗████╗ ████║██╔══██╗     ██╔══██╗██║
@@ -21,14 +28,6 @@
          IPL ORACLE · POWERED BY ZOMBAI · @balram3429
 ```
 ---
----
-
-## 🚀 Overview
-
-ZombAI is a **next-gen Chrome Extension (Manifest V3)** with a futuristic **retro-terminal UI** that lets you explore GitHub profiles and repositories with speed, style, and intelligence.
-
----
-
 ## 🎥 Preview
 
 <p align="center">
