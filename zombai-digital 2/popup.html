@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <title>ZombAI</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Rajdhani:wght@300;500;700&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg:           #07090f;
+      --bg2:          #0c101a;
+      --bg3:          #111622;
+      --border:       #1e2a3a;
+      --border2:      #243040;
+      --white:        #ffffff;
+      --white-dim:    rgba(255,255,255,0.55);
+      --white-muted:  rgba(255,255,255,0.25);
+      --accent:       #4af0ff;
+      --accent2:      #ff4a6e;
+      --accent3:      #ffd84a;
+      --green:        #39ff14;
+      --card-hover:   #141c2e;
+      --radius:       8px;
+    }
+    html { width: 420px; }
+    body { width: 420px; background: var(--bg); color: var(--white); font-family: 'Rajdhani', sans-serif; overflow-x: hidden; }
+    body::after { content:''; position:fixed; inset:0; background:repeating-linear-gradient(0deg,transparent,transparent 3px,rgba(0,0,0,0.06) 3px,rgba(0,0,0,0.06) 4px); pointer-events:none; z-index:9999; }
+
+    /* HEADER */
+    .header { display:flex; align-items:center; gap:10px; padding:13px 16px 11px; background:var(--bg2); border-bottom:1px solid var(--border); position:relative; overflow:hidden; }
+    .header::before { content:''; position:absolute; top:-30px; right:-30px; width:100px; height:100px; background:radial-gradient(circle,rgba(74,240,255,0.08) 0%,transparent 70%); pointer-events:none; }
+    .logo-mark { width:34px; height:34px; flex-shrink:0; }
+    .logo-mark svg { width:100%; height:100%; }
+    .brand { flex:1; line-height:1; }
+    .brand-name { font-family:'Orbitron',monospace; font-size:16px; font-weight:900; letter-spacing:4px; color:var(--white); }
+    .brand-name span { color:var(--accent); }
+    .brand-tagline { font-family:'Share Tech Mono',monospace; font-size:7px; letter-spacing:2px; color:var(--white-muted); margin-top:3px; text-transform:uppercase; }
+    .status-pill { display:flex; align-items:center; gap:5px; font-family:'Share Tech Mono',monospace; font-size:8px; letter-spacing:1px; color:var(--green); background:rgba(57,255,20,0.08); border:1px solid rgba(57,255,20,0.2); border-radius:20px; padding:3px 8px; }
+    .status-dot { width:5px; height:5px; border-radius:50%; background:var(--green); box-shadow:0 0 6px var(--green); animation:blink 1.4s ease-in-out infinite; }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    /* CLOCK */
+    .clock-section { background:var(--bg2); padding:16px 16px 14px; border-bottom:1px solid var(--border); position:relative; overflow:hidden; text-align:center; }
+    .clock-section::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 60% 80% at 50% 50%,rgba(74,240,255,0.04) 0%,transparent 70%); pointer-events:none; }
+    .clock-label { font-family:'Share Tech Mono',monospace; font-size:8px; letter-spacing:4px; color:var(--white-muted); text-transform:uppercase; margin-bottom:8px; }
+    .digital-display { position:relative; display:inline-block; }
+    .time-ghost { font-family:'Orbitron',monospace; font-size:48px; font-weight:900; letter-spacing:6px; color:rgba(255,255,255,0.04); position:absolute; top:0; left:0; user-select:none; pointer-events:none; white-space:nowrap; }
+    #timeDisplay { font-family:'Orbitron',monospace; font-size:48px; font-weight:900; letter-spacing:6px; color:var(--white); text-shadow:0 0 20px rgba(255,255,255,0.5),0 0 60px rgba(74,240,255,0.15); position:relative; z-index:1; white-space:nowrap; }
+    .time-meta { display:flex; align-items:center; justify-content:center; gap:12px; margin-top:8px; }
+    .time-badge { font-family:'Share Tech Mono',monospace; font-size:8px; letter-spacing:2px; padding:3px 10px; border-radius:20px; text-transform:uppercase; }
+    .badge-tz  { background:rgba(74,240,255,0.1); border:1px solid rgba(74,240,255,0.25); color:var(--accent); }
+    .badge-date{ background:rgba(255,255,255,0.05); border:1px solid var(--border); color:var(--white-dim); }
+
+    /* TABS */
+    .tab-bar { display:flex; background:var(--bg3); border-bottom:1px solid var(--border); }
+    .tab { flex:1; padding:9px 0; font-family:'Rajdhani',sans-serif; font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; text-align:center; color:var(--white-muted); cursor:pointer; border:none; background:transparent; border-bottom:2px solid transparent; transition:color 0.2s,border-color 0.2s; }
+    .tab:hover { color:var(--white-dim); }
+    .tab.active { color:var(--accent); border-bottom-color:var(--accent); background:rgba(74,240,255,0.04); }
+
+    .panel { display:none; }
+    .panel.active { display:block; }
+
+    /* ── SEARCH PANEL ── */
+    .search-panel { padding:14px; background:var(--bg); }
+    .input-group { margin-bottom:11px; }
+    .input-label { display:flex; align-items:center; gap:6px; font-family:'Share Tech Mono',monospace; font-size:8px; letter-spacing:2px; color:var(--white-muted); text-transform:uppercase; margin-bottom:5px; }
+    .input-label .opt { margin-left:auto; font-size:7px; color:rgba(255,255,255,0.12); }
+    .text-input { width:100%; background:var(--bg2); border:1px solid var(--border2); border-radius:var(--radius); padding:9px 12px; color:var(--white); font-family:'Share Tech Mono',monospace; font-size:11px; letter-spacing:1px; outline:none; transition:border-color 0.2s,box-shadow 0.2s; }
+    .text-input::placeholder { color:rgba(255,255,255,0.18); }
+    .text-input:focus { border-color:rgba(74,240,255,0.5); box-shadow:0 0 0 3px rgba(74,240,255,0.06); }
+    .text-input.has-value { border-color:rgba(74,240,255,0.3); }
+    .input-hint { font-family:'Share Tech Mono',monospace; font-size:7px; letter-spacing:1px; color:rgba(255,255,255,0.15); margin-top:4px; padding-left:2px; }
+
+    .action-row { display:flex; gap:8px; margin-top:14px; }
+    .btn-fetch { flex:1; display:flex; align-items:center; justify-content:center; gap:8px; padding:10px 14px; background:linear-gradient(135deg,rgba(74,240,255,0.12),rgba(74,240,255,0.05)); border:1px solid rgba(74,240,255,0.4); border-radius:var(--radius); color:var(--accent); font-family:'Orbitron',monospace; font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; cursor:pointer; transition:all 0.2s; position:relative; overflow:hidden; }
+    .btn-fetch::before { content:''; position:absolute; left:-100%; top:0; width:100%; height:100%; background:linear-gradient(90deg,transparent,rgba(74,240,255,0.14),transparent); transition:left 0.4s; }
+    .btn-fetch:hover::before { left:100%; }
+    .btn-fetch:hover { border-color:var(--accent); box-shadow:0 0 16px rgba(74,240,255,0.2); color:#fff; }
+    .btn-fetch:disabled { opacity:0.4; cursor:not-allowed; pointer-events:none; }
+    .btn-reset { display:flex; align-items:center; justify-content:center; gap:6px; padding:10px 14px; background:rgba(255,74,110,0.06); border:1px solid rgba(255,74,110,0.3); border-radius:var(--radius); color:var(--accent2); font-family:'Orbitron',monospace; font-size:9px; font-weight:700; letter-spacing:2px; text-transform:uppercase; cursor:pointer; transition:all 0.2s; }
+    .btn-reset:hover { background:rgba(255,74,110,0.12); border-color:var(--accent2); box-shadow:0 0 12px rgba(255,74,110,0.15); }
+
+    /* Filter chips */
+    .filter-chips { display:flex; flex-wrap:wrap; gap:6px; padding:10px 14px 0; }
+    .filter-chips:empty { display:none; }
+    .chip { display:flex; align-items:center; gap:5px; font-family:'Share Tech Mono',monospace; font-size:8px; letter-spacing:1px; padding:3px 9px; border-radius:20px; text-transform:uppercase; }
+    .chip-user   { background:rgba(74,240,255,0.1);   border:1px solid rgba(74,240,255,0.25);   color:var(--accent); }
+    .chip-filter { background:rgba(255,216,74,0.1);   border:1px solid rgba(255,216,74,0.25);   color:var(--accent3); }
+    .chip-count  { background:rgba(57,255,20,0.08);   border:1px solid rgba(57,255,20,0.2);    color:var(--green); }
+
+    /* Profile card */
+    .profile-card { display:none; margin:12px 14px 0; padding:12px; background:var(--bg2); border:1px solid var(--border2); border-radius:var(--radius); position:relative; overflow:hidden; }
+    .profile-card.visible { display:flex; gap:12px; align-items:flex-start; }
+    .profile-card::before { content:''; position:absolute; top:0; left:0; right:0; height:2px; background:linear-gradient(90deg,var(--accent),transparent); }
+    .profile-avatar { width:46px; height:46px; border-radius:50%; border:2px solid rgba(74,240,255,0.3); flex-shrink:0; object-fit:cover; }
+    .profile-avatar-ph { width:46px; height:46px; border-radius:50%; border:2px solid rgba(74,240,255,0.3); flex-shrink:0; background:var(--bg3); display:flex; align-items:center; justify-content:center; font-size:20px; }
+    .profile-info { flex:1; min-width:0; }
+    .profile-name { font-family:'Orbitron',monospace; font-size:12px; font-weight:700; color:var(--white); letter-spacing:1px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .profile-login { font-family:'Share Tech Mono',monospace; font-size:9px; color:var(--accent); letter-spacing:1px; margin-top:2px; }
+    .profile-bio { font-size:10px; font-weight:300; color:var(--white-dim); margin-top:4px; line-height:1.4; }
+    .profile-stats { display:flex; gap:12px; margin-top:7px; flex-wrap:wrap; }
+    .pstat { font-family:'Share Tech Mono',monospace; font-size:8px; letter-spacing:1px; color:var(--white-muted); display:flex; align-items:center; gap:3px; }
+    .pstat strong { color:var(--white-dim); }
+    .profile-gh-btn { position:absolute; top:10px; right:10px; font-family:'Share Tech Mono',monospace; font-size:8px; color:var(--accent); opacity:0.6; cursor:pointer; background:none; border:none; transition:opacity 0.2s; }
+    .profile-gh-btn:hover { opacity:1; }
+
+    /* REPOS PANEL */
+    .repos-panel { background:var(--bg); max-height:360px; overflow-y:auto; }
+    .repos-panel::-webkit-scrollbar { width:4px; }
+    .repos-panel::-webkit-scrollbar-track { background:var(--bg); }
+    .repos-panel::-webkit-scrollbar-thumb { background:var(--border2); border-radius:2px; }
+    .repos-toolbar { display:flex; align-items:center; gap:8px; padding:9px 14px; border-bottom:1px solid var(--border); background:var(--bg2); position:sticky; top:0; z-index:10; }
+    .search-input { flex:1; background:var(--bg3); border:1px solid var(--border2); border-radius:6px; padding:5px 10px; color:var(--white); font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:1px; outline:none; transition:border-color 0.2s; }
+    .search-input::placeholder { color:var(--white-muted); }
+    .search-input:focus { border-color:rgba(74,240,255,0.4); }
+    .sort-select { background:var(--bg3); border:1px solid var(--border2); border-radius:6px; padding:5px 7px; color:var(--white-dim); font-family:'Share Tech Mono',monospace; font-size:9px; outline:none; cursor:pointer; }
+    .repos-count { font-family:'Share Tech Mono',monospace; font-size:8px; color:var(--white-muted); white-space:nowrap; }
+
+    .repo-list { padding:8px 10px 10px; }
+    .repo-card { display:block; padding:11px 13px; border:1px solid var(--border); border-radius:var(--radius); margin-bottom:7px; background:var(--bg2); text-decoration:none; color:var(--white); cursor:pointer; transition:border-color 0.2s,background 0.2s,transform 0.15s; position:relative; overflow:hidden; }
+    .repo-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; background:var(--accent); transform:scaleY(0); transform-origin:bottom; transition:transform 0.2s ease; }
+    .repo-card:hover { background:var(--card-hover); border-color:var(--border2); transform:translateX(2px); }
+    .repo-card:hover::before { transform:scaleY(1); }
+    .repo-top { display:flex; align-items:flex-start; justify-content:space-between; gap:8px; margin-bottom:5px; }
+    .repo-name { font-family:'Orbitron',monospace; font-size:10px; font-weight:700; color:var(--white); letter-spacing:1px; word-break:break-all; line-height:1.3; }
+    .repo-stars { display:flex; align-items:center; gap:3px; font-family:'Share Tech Mono',monospace; font-size:9px; color:var(--accent3); white-space:nowrap; flex-shrink:0; }
+    .repo-desc { font-size:11px; font-weight:300; color:var(--white-dim); line-height:1.4; margin-bottom:8px; }
+    .repo-footer { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+    .repo-lang { display:flex; align-items:center; gap:5px; font-family:'Share Tech Mono',monospace; font-size:8px; color:var(--white-muted); }
+    .lang-dot { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
+    .repo-tag { font-family:'Share Tech Mono',monospace; font-size:8px; padding:2px 7px; border-radius:20px; background:rgba(74,240,255,0.08); color:var(--accent); border:1px solid rgba(74,240,255,0.15); }
+    .repo-updated { font-family:'Share Tech Mono',monospace; font-size:8px; color:var(--white-muted); margin-left:auto; }
+    .match-hl { color:var(--accent3); font-weight:700; }
+
+    .state-box { padding:28px 16px; text-align:center; }
+    .state-icon { font-size:26px; margin-bottom:10px; }
+    .state-title { font-family:'Orbitron',monospace; font-size:11px; font-weight:700; letter-spacing:2px; color:var(--white-dim); margin-bottom:6px; }
+    .state-sub { font-family:'Share Tech Mono',monospace; font-size:9px; color:var(--white-muted); letter-spacing:1px; line-height:1.7; }
+    .loader { display:inline-block; width:20px; height:20px; border:2px solid var(--border2); border-top-color:var(--accent); border-radius:50%; animation:spin 0.8s linear infinite; margin-bottom:12px; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    .refresh-btn { display:inline-flex; align-items:center; gap:6px; margin-top:12px; padding:7px 16px; background:transparent; border:1px solid var(--border2); border-radius:var(--radius); color:var(--white-dim); font-family:'Share Tech Mono',monospace; font-size:9px; letter-spacing:1px; cursor:pointer; transition:border-color 0.2s,color 0.2s; }
+    .refresh-btn:hover { border-color:var(--accent); color:var(--accent); }
+
+    /* EXPLORE PANEL */
+    .explore-panel { padding:14px; background:var(--bg); }
+    .explore-btn { display:flex; align-items:center; justify-content:center; gap:10px; width:100%; padding:11px 16px; background:linear-gradient(135deg,rgba(74,240,255,0.08),rgba(74,240,255,0.03)); border:1px solid rgba(74,240,255,0.3); border-radius:var(--radius); color:var(--accent); font-family:'Orbitron',monospace; font-size:9px; font-weight:700; letter-spacing:3px; text-transform:uppercase; cursor:pointer; text-decoration:none; transition:all 0.25s ease; position:relative; overflow:hidden; }
+    .explore-btn::before { content:''; position:absolute; left:-100%; top:0; width:100%; height:100%; background:linear-gradient(90deg,transparent,rgba(74,240,255,0.12),transparent); transition:left 0.4s; }
+    .explore-btn:hover::before { left:100%; }
+    .explore-btn:hover { border-color:var(--accent); box-shadow:0 0 18px rgba(74,240,255,0.2); color:#fff; text-shadow:0 0 10px var(--accent); }
+
+    /* FOOTER */
+    .footer { display:flex; align-items:center; justify-content:space-between; padding:7px 14px; background:var(--bg2); border-top:1px solid var(--border); }
+    .footer-brand { font-family:'Share Tech Mono',monospace; font-size:7px; letter-spacing:2px; color:rgba(255,255,255,0.15); text-transform:uppercase; }
+    .footer-link { font-family:'Share Tech Mono',monospace; font-size:7px; letter-spacing:1px; color:var(--accent); text-decoration:none; opacity:0.6; transition:opacity 0.2s; cursor:pointer; background:none; border:none; }
+    .footer-link:hover { opacity:1; }
+  </style>
+</head>
+<body>
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo-mark">
+      <svg viewBox="0 0 36 36" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <circle cx="18" cy="18" r="17" stroke="rgba(74,240,255,0.3)" stroke-width="1"/>
+        <text x="18" y="24" text-anchor="middle" font-family="serif" font-size="22" fill="white">💀</text>
+        <circle cx="18" cy="18" r="17" stroke="rgba(74,240,255,0.12)" stroke-width="4"/>
+      </svg>
+    </div>
+    <div class="brand">
+      <div class="brand-name">ZOMB<span>AI</span></div>
+      <div class="brand-tagline">intelligent projects · built to learn</div>
+    </div>
+    <div class="status-pill"><div class="status-dot"></div>LIVE</div>
+  </div>
+
+  <!-- CLOCK -->
+  <div class="clock-section">
+    <div class="clock-label">◈ India Standard Time</div>
+    <div class="digital-display">
+      <div class="time-ghost" id="timeGhost">00:00:00</div>
+      <div id="timeDisplay">00:00:00</div>
+    </div>
+    <div class="time-meta">
+      <div class="time-badge badge-tz">IST · UTC+5:30</div>
+      <div class="time-badge badge-date" id="dateDisplay">—</div>
+    </div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tab-bar">
+    <button class="tab active" data-tab="search">🔍 Search</button>
+    <button class="tab" data-tab="repos">⚡ Repos</button>
+    <button class="tab" data-tab="explore">🧟 Explore</button>
+  </div>
+
+  <!-- ══ SEARCH PANEL ══ -->
+  <div class="panel active" id="panel-search">
+    <div class="search-panel">
+
+      <div class="input-group">
+        <div class="input-label">
+          <span>👤</span> GitHub Username
+        </div>
+        <input class="text-input" type="text" id="inputUser"
+               placeholder="e.g. torvalds, balram3429…"
+               autocomplete="off" spellcheck="false"/>
+        <div class="input-hint">Any public GitHub username</div>
+      </div>
+
+      <div class="input-group">
+        <div class="input-label">
+          <span>🔎</span> Repo Filter Pattern
+          <span class="opt">(optional)</span>
+        </div>
+        <input class="text-input" type="text" id="inputFilter"
+               placeholder="e.g. zombai, react, cli…"
+               autocomplete="off" spellcheck="false"/>
+        <div class="input-hint">Matches name · description · topics — blank = show all</div>
+      </div>
+
+      <div class="action-row">
+        <button class="btn-fetch" id="btnFetch">⚡ Fetch</button>
+        <button class="btn-reset" id="btnReset">↺ Reset</button>
+      </div>
+    </div>
+
+    <div class="filter-chips" id="filterChips"></div>
+
+    <!-- Profile card (shown after fetch) -->
+    <div class="profile-card" id="profileCard">
+      <div class="profile-avatar-ph" id="profileAvatarPh">👤</div>
+      <img class="profile-avatar" id="profileAvatar" src="" alt="" style="display:none"/>
+      <div class="profile-info">
+        <div class="profile-name" id="profileName">—</div>
+        <div class="profile-login" id="profileLogin">—</div>
+        <div class="profile-bio" id="profileBio"></div>
+        <div class="profile-stats" id="profileStats"></div>
+      </div>
+      <button class="profile-gh-btn" id="profileGhBtn">↗ GitHub</button>
+    </div>
+    <div style="height:12px"></div>
+  </div>
+
+  <!-- ══ REPOS PANEL ══ -->
+  <div class="panel repos-panel" id="panel-repos">
+    <div class="repos-toolbar">
+      <input class="search-input" type="text" id="repoSearch" placeholder="Filter results…"/>
+      <select class="sort-select" id="repoSort">
+        <option value="updated">Recent</option>
+        <option value="stars">Stars</option>
+        <option value="name">Name A–Z</option>
+      </select>
+      <span class="repos-count" id="repoCount">—</span>
+    </div>
+    <div id="repoList">
+      <div class="state-box">
+        <div class="state-icon">🔍</div>
+        <div class="state-title">No Search Yet</div>
+        <div class="state-sub">Use the Search tab to enter<br>a GitHub username &amp; fetch repos.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══ EXPLORE PANEL ══ -->
+  <div class="panel explore-panel" id="panel-explore">
+    <button class="explore-btn" id="exploreBtn">
+      <span>🧟</span><span>Open ZombAI Portal</span><span style="opacity:.6">↗</span>
+    </button>
+    <div style="height:10px"></div>
+    <button class="explore-btn" id="zombaiReposBtn"
+            style="border-color:rgba(255,74,110,0.3);color:#ff4a6e;background:linear-gradient(135deg,rgba(255,74,110,0.06),rgba(255,74,110,0.02))">
+      <span>⚡</span><span>Load ZombAI Repos</span><span style="opacity:.6">→</span>
+    </button>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <span class="footer-brand">ZombAI © 2025</span>
+    <button class="footer-link" id="ghLink">github.com/balram3429 ↗</button>
+  </div>
+
+  <script src="popup.js"></script>
+</body>
+</html>
