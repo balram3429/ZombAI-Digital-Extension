@@ -1,5 +1,19 @@
 # 🧟 ZombAI Digital — Chrome Extension
 
+---
+
+```
+███████╗ ██████╗ ███╗   ███╗██████╗       █████╗ ██╗
+╚══███╔╝██╔═══██╗████╗ ████║██╔══██╗     ██╔══██╗██║
+  ███╔╝ ██║   ██║██╔████╔██║██████╔╝     ███████║██║
+ ███╔╝  ██║   ██║██║╚██╔╝██║██╔══██╗     ██╔══██║██║
+███████╗╚██████╔╝██║ ╚═╝ ██║██████╔╝     ██║  ██║██║
+╚══════╝ ╚═════╝ ╚═╝     ╚═╝╚═════╝      ╚═╝  ╚═╝╚═╝
+         IPL ORACLE · POWERED BY ZOMBAI · @balram3429
+```
+
+---
+
 <p align="center">
   <img src="https://img.shields.io/badge/Manifest-V3-blue?style=for-the-badge" />
   <img src="https://img.shields.io/badge/Chrome-Extension-green?style=for-the-badge&logo=googlechrome" />
@@ -10,15 +24,7 @@
 <p align="center">
   <b>Intelligent projects · built to learn</b>
 </p>
-```
-███████╗ ██████╗ ███╗   ███╗██████╗       █████╗ ██╗
-╚══███╔╝██╔═══██╗████╗ ████║██╔══██╗     ██╔══██╗██║
-  ███╔╝ ██║   ██║██╔████╔██║██████╔╝     ███████║██║
- ███╔╝  ██║   ██║██║╚██╔╝██║██╔══██╗     ██╔══██║██║
-███████╗╚██████╔╝██║ ╚═╝ ██║██████╔╝     ██║  ██║██║
-╚══════╝ ╚═════╝ ╚═╝     ╚═╝╚═════╝      ╚═╝  ╚═╝╚═╝
-         IPL ORACLE · POWERED BY ZOMBAI · @balram3429
-```
+
 ---
 
 ## 🚀 Overview
